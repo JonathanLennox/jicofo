@@ -17,6 +17,7 @@
  */
 package org.jitsi.jicofo.xmpp.jingle
 
+import org.jitsi.jicofo.codec.Config
 import org.jitsi.jicofo.conference.source.ConferenceSourceMap
 import org.jitsi.jicofo.xmpp.createSessionInitiate
 import org.jitsi.jicofo.xmpp.createTransportReplace
@@ -26,6 +27,7 @@ import org.jitsi.utils.MediaType
 import org.jitsi.utils.OrderedJsonObject
 import org.jitsi.utils.logging2.createLogger
 import org.jitsi.xmpp.extensions.jingle.ContentPacketExtension
+import org.jitsi.xmpp.extensions.jingle.ExtmapAllowMixedPacketExtension
 import org.jitsi.xmpp.extensions.jingle.GroupPacketExtension
 import org.jitsi.xmpp.extensions.jingle.JingleAction
 import org.jitsi.xmpp.extensions.jingle.JingleIQ
@@ -150,6 +152,9 @@ class JingleSession(
         val jingleIq = createTransportReplace(localJid, this, contentsWithSources)
 
         jingleIq.addExtension(GroupPacketExtension.createBundleGroup(jingleIq.contentList))
+        if (Config.config.extmapAllowMixed) {
+            jingleIq.addExtension(ExtmapAllowMixedPacketExtension())
+        }
         additionalExtensions.forEach { jingleIq.addExtension(it) }
         if (encodeSourcesAsJson) {
             jingleIq.addExtension(sources.toJsonMessageExtension())
@@ -206,6 +211,9 @@ class JingleSession(
         val contentsWithSources = if (encodeSourcesAsJson) contents else sources.toContents(contents)
         val sessionInitiate = createSessionInitiate(localJid, remoteJid, sid, contentsWithSources).apply {
             addExtension(GroupPacketExtension.createBundleGroup(contentList))
+            if (Config.config.extmapAllowMixed) {
+                addExtension(ExtmapAllowMixedPacketExtension())
+            }
             additionalExtensions.forEach { addExtension(it) }
             if (encodeSourcesAsJson) {
                 addExtension(sources.toJsonMessageExtension())
