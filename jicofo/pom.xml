@@ -301,6 +301,7 @@
         <configuration>
           <systemPropertyVariables>
             <java.util.logging.config.file>${project.parent.basedir}/lib/logging.properties</java.util.logging.config.file>
+            <kotest.framework.classpath.scanning.autoscan.disable>true</kotest.framework.classpath.scanning.autoscan.disable>
           </systemPropertyVariables>
         </configuration>
       </plugin>
